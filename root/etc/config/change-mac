@@ -1,0 +1,4 @@
+
+config change-mac
+	option enabled '0'
+
