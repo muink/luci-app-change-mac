@@ -1,0 +1,74 @@
+msgid ""
+msgstr ""
+"Language: zh-cn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+msgid ""
+"Assign a random MAC address to the designated interface on every time "
+"boot"
+msgstr "每次引导时, 将随机 MAC 地址分配给指定的接口"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:71
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:72
+msgid "Change MAC now"
+msgstr "立即更换 MAC"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:85
+msgid "Disorderly"
+msgstr "无序随机"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:44
+msgid "Enable MAC randomization"
+msgstr "启用 MAC 随机化"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:47
+msgid "Enabled interfaces"
+msgstr "已启用的接口"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:92
+msgid "Locally administered address"
+msgstr "本机管理地址"
+
+#: applications/luci-app-change-mac/luasrc/controller/change-mac.lua:13
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+msgid "MAC address randomizer"
+msgstr "MAC 地址随机化"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:90
+msgid "MAC address type"
+msgstr "MAC 地址类型"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:84
+msgid "Multi-interface MAC random mode"
+msgstr "多接口 MAC 随机模式"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:55
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:56
+msgid "Save & Apply"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:86
+msgid "Sequence"
+msgstr "顺序随机"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:93
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:98
+msgid "Specify OUI"
+msgstr "指定 OUI"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:91
+msgid "Use command 'rgmac --help' to get more information"
+msgstr "使用命令 'rgmac --help' 获取更多信息"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:104
+msgid "Use command 'rgmac -lrouter' to get valid vendor name"
+msgstr "使用命令 'rgmac -lrouter' 获取有效的厂商名称"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:94
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:103
+msgid "Vendor name"
+msgstr "厂商名称"

@@ -1,0 +1,69 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+msgid ""
+"Assign a random MAC address to the designated interface on every time "
+"boot"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:71
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:72
+msgid "Change MAC now"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:85
+msgid "Disorderly"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:44
+msgid "Enable MAC randomization"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:47
+msgid "Enabled interfaces"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:92
+msgid "Locally administered address"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/controller/change-mac.lua:13
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+msgid "MAC address randomizer"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:90
+msgid "MAC address type"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:84
+msgid "Multi-interface MAC random mode"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:55
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:56
+msgid "Save & Apply"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:86
+msgid "Sequence"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:93
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:98
+msgid "Specify OUI"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:91
+msgid "Use command 'rgmac --help' to get more information"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:104
+msgid "Use command 'rgmac -lrouter' to get valid vendor name"
+msgstr ""
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:94
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:103
+msgid "Vendor name"
+msgstr ""
