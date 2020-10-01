@@ -12,7 +12,7 @@ PKG_VERSION:=0.1.0
 PKG_RELEASE:=2020****
 
 LUCI_TITLE:=LuCI for MAC address randomizer
-LUCI_DEPENDS:=+luci-compat +bash +rgmac
+LUCI_DEPENDS:=+luci-compat +bash +rgmac +getopt
 
 LUCI_DESCRIPTION:=Assign a random MAC address to the designated interface on every time boot.
 
