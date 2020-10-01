@@ -3,8 +3,7 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
 msgid ""
-"Assign a random MAC address to the designated interface on every time "
-"boot"
+"Assign a random MAC address to the designated interface on every time boot"
 msgstr ""
 
 #: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:71
