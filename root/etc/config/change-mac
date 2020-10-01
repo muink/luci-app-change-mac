@@ -1,4 +1,8 @@
 
 config change-mac
 	option enabled '0'
+	option random_mode 'disorderly'
+	option mac_type 'locally'
+	option mac_type_specific '20:CF:30'
+	option mac_type_vendor 'router:Asus'
 
