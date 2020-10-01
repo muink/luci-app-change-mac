@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_NAME:=luci-app-change-mac
-PKG_VERSION:=0.1.0
-PKG_RELEASE:=2020****
+PKG_VERSION:=0.1.3
+PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI for MAC address randomizer
 LUCI_DEPENDS:=+luci-compat +bash +rgmac +getopt
@@ -18,7 +18,6 @@ LUCI_DESCRIPTION:=Assign a random MAC address to the designated interface on eve
 
 define Package/$(LUCI_NAME)/conffiles
 /etc/config/change-mac
-/etc/change-mac/
 endef
 
 define Package/$(LUCI_NAME)/prerm
