@@ -46,7 +46,7 @@ enabled.rmempty = false
 
 interface = s:option(DynamicList, "interface", translate("Enabled interfaces"))
 interface.template = "cbi/network_ifacelist"
-interface.nobridges = true
+interface.nobridges = false
 interface.noaliases = true
 interface.rmempty = false
 --interface.network = arg[1]

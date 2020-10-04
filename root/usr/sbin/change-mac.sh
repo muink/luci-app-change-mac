@@ -112,7 +112,7 @@ mac_pool $MACPOOL "$TYPE" $#
 # Set
 for i in $(seq 1 $#); do
 uci -q batch <<-EOF >/dev/null
-$(eval "uci show network | grep -E \"\\.ifname='\${$i}'\$\" | sed -E \"s|\\.ifname=.+\$|.macaddr='\${$MACPOOL[$i]}'|g; s|^|set |g\"")
+$(eval "uci show network | grep -E \"\\.ifname='\${$i}'\$|\$(echo \"\${$i}\"|sed -E 's|^br-(.+)\$|\\1|')\\.type='bridge'\$\" | sed -E \"s,\\.(ifname|type)=.+\$,.macaddr='\${$MACPOOL[$i]}',g; s|^|set |g\"")
 EOF
 done
 
