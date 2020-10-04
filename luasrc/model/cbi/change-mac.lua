@@ -84,6 +84,20 @@ change_now.write = function()
 	sys.call ("/usr/sbin/change-mac.sh" .. _mergep .. _ramode .. _matype .. " " .. _ntlist)
 end
 
+restore_sel = s:option(Button, "_restore_sel", translate("Restore select interfaces"))
+restore_sel.inputtitle = translate("Restore select interfaces")
+restore_sel.inputstyle = "apply"
+restore_sel.write = function()
+	--m.uci:save(conf)
+	m.uci:commit(conf)
+	m.uci:apply()
+	getuci()
+
+	sys.call ("for _net in \$(uci get " .. conf .. typeds .. "network); do uci delete network.\$_net.macaddr; done")
+	sys.call ("uci commit network")
+	sys.call ("\/etc\/init.d\/network restart")
+end
+
 
 random_mode = s:option(ListValue, "random_mode", translate("Multi-interface MAC random mode"))
 random_mode:value("disorderly", translate("Disorderly"))
