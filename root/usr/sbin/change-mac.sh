@@ -11,13 +11,13 @@ WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" # <--
 MACPOOL=Mpool
 
 # Get options
-GETOPT=$(getopt -n $(basename $0) -o et: -l type:,help -- "$@")
+GETOPT=$(getopt -n $(basename $0) -o met: -l type:,help -- "$@")
 [ $? -ne 0 ] && echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
 ERROR=$(echo "$GETOPT" | sed "s|'[^']*'||g; s| -- .+$||; s| --$||")
 
 # Duplicate options
-for ru in --help\|--help -e\|-e -t\|--type; do
+for ru in --help\|--help -m\|-m -e\|-e -t\|--type; do
   eval "echo \"\$ERROR\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
@@ -39,6 +39,7 @@ Interface MAC changer for Openwrt\n\
   change-mac.sh -t console:Sony eth0    -- Generate MAC address(Sony PS)\n\
 \n\
 Options:\n\
+  -m                                    -- Same physical ifname, Same MAC\n\
   -e                                    -- Sequence randomization\n\
   -t, --type <mactype>                  -- MAC address type\n\
   --help                                -- Returns help info\n\
@@ -85,6 +86,9 @@ while [ -n "$1" ]; do
       _help
       exit
     ;;
+    -m)
+      SMIFMAC=true
+    ;;
     -e)
       MODE=sequence
     ;;
@@ -110,10 +114,28 @@ done
 mac_pool $MACPOOL "$TYPE" $#
 
 # Set
-for i in $(seq 1 $#); do
-uci -q batch <<-EOF >/dev/null
-$(eval "uci show network | grep -E \"\\.ifname='\${$i}'\$|\$(echo \"\${$i}\"|sed -E 's|^br-(.+)\$|\\1|')\\.type='bridge'\$\" | sed -E \"s,\\.(ifname|type)=.+\$,.macaddr='\${$MACPOOL[$i]}',g; s|^|set |g\"")
-EOF
+_count=1
+for _net in "$@"; do
+  #bridge
+  if [ "$(uci get network.${_net}.type 2>/dev/null)" == "bridge" ]; then
+    uci set network.${_net}.macaddr="$(eval "echo \"\${$MACPOOL[$_count]}\"")"
+    ((_count++))
+    continue
+  fi
+  #single
+  _ifname=$(uci get network.${_net}.ifname)
+  if [ "${!_ifname}" == "" ]; then
+    eval "$_ifname=\${$MACPOOL[$_count]}"
+    uci set network.${_net}.macaddr="${!_ifname}"
+    ((_count++))
+  else
+    if [ "$SMIFMAC" == "true" ]; then
+      uci set network.${_net}.macaddr="${!_ifname}"
+    else
+      uci set network.${_net}.macaddr="$(eval "echo \"\${$MACPOOL[$_count]}\"")"
+      ((_count++))
+    fi
+  fi
 done
 
 uci commit network

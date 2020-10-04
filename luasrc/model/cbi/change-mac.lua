@@ -18,7 +18,8 @@ m.pageaction = false
 
 local _enable
 local _crontb
-local _iflist
+local _ntlist
+local _mergep
 local _ramode
 local _matype
 local _matype_specific
@@ -27,7 +28,9 @@ local _matype_vendor
 function getuci()
 	_enable = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "enabled")))
 	_crontb = tostring(util.trim(sys.exec("sed -n '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/p' /etc/crontabs/root")))
-	_iflist = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "interface")))
+	_ntlist = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "network")))
+	_mergep = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "merge_physical")))
+	if _mergep == "1" then _mergep = " -m"; else _mergep = ""; end
 	_ramode = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "random_mode")))
 	if _ramode == "disorderly" then _ramode = ""; elseif _ramode == "sequence" then _ramode = " -e"; else _ramode = ""; end
 	_matype = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "mac_type")))
@@ -44,13 +47,14 @@ s.anonymous = true
 enabled = s:option(Flag, "enabled", translate("Enable MAC randomization"))
 enabled.rmempty = false
 
-interface = s:option(DynamicList, "interface", translate("Enabled interfaces"))
-interface.template = "cbi/network_ifacelist"
-interface.nobridges = false
-interface.noaliases = true
-interface.rmempty = false
---interface.network = arg[1]
-interface.widget = "checkbox"
+network = s:option(DynamicList, "network", translate("Enabled interfaces"))
+network.template = "cbi/network_netlist"
+network.novirtual = true --not supported VLAN
+network.rmempty = false
+network.widget = "checkbox"
+
+merge_physical = s:option(Flag, "merge_physical", translate("Merge the same physical interface"))
+merge_physical.rmempty = false
 
 save_apply = s:option(Button, "_save_apply", translate("Save & Apply"))
 save_apply.inputtitle = translate("Save & Apply")
@@ -64,7 +68,7 @@ save_apply.write = function()
 	if _enable == "0" then sys.call ("sed -i '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/d' /etc/crontabs/root"); end
 	if _enable == "1" then
 		sys.call ("sed -i '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/d' /etc/crontabs/root")
-		sys.call ("sed -i '1i @reboot \\\/usr\\\/sbin\\\/change-mac.sh" .. _ramode .. _matype .. " " .. _iflist .. "' /etc/crontabs/root")
+		sys.call ("sed -i '1i @reboot \\\/usr\\\/sbin\\\/change-mac.sh" .. _mergep .. _ramode .. _matype .. " " .. _ntlist .. "' /etc/crontabs/root")
 	end
 end
 
@@ -77,7 +81,7 @@ change_now.write = function()
 	m.uci:apply()
 	getuci()
 
-	sys.call ("/usr/sbin/change-mac.sh" .. _ramode .. _matype .. " " .. _iflist)
+	sys.call ("/usr/sbin/change-mac.sh" .. _mergep .. _ramode .. _matype .. " " .. _ntlist)
 end
 
 

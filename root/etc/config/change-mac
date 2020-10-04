@@ -1,6 +1,7 @@
 
 config change-mac
 	option enabled '0'
+	option merge_physical '1'
 	option random_mode 'disorderly'
 	option mac_type 'locally'
 	option mac_type_specific '20:CF:30'
