@@ -22,7 +22,8 @@ endef
 
 define Package/$(LUCI_NAME)/prerm
 #!/bin/sh
-sed -i '/\/usr\/sbin\/change-mac.sh/d' /etc/crontabs/root
+/etc/init.d/change-mac stop
+/etc/init.d/change-mac disable
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk

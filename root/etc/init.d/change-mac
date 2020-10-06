@@ -1,0 +1,70 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2020 muink
+
+START=17
+#STOP=90
+#USE_PROCD=1
+
+EXTRA_COMMANDS="restore"
+EXTRA_HELP="	restore	Restore MAC of select interfaces"
+
+PROG=/usr/sbin/change-mac.sh
+PACKAGE_NAME="change-mac"
+TYPED_SECTION=".@change-mac[0]."
+
+
+change_mac() {
+	local ucivv="enabled network merge_physical random_mode mac_type mac_type_specific mac_type_vendor"
+	for _var in $ucivv; do
+	  eval "local $_var=\$(uci get $PACKAGE_NAME$TYPED_SECTION$_var 2>/dev/null)"
+	done
+
+#	for _var in $ucivv; do
+#		eval "echo \"$_var=\$$_var\""
+#	done
+
+if [ "$enabled" == "1" ]; then
+local merge
+local mode
+local type
+[ "$merge_physical" == "1" ] && merge=" -m" || merge=""
+if   [ "$random_mode" == "disorderly" ]; then mode="";
+elif [ "$random_mode" == "sequence" ]; then mode=" -e";
+else mode="";
+fi
+if   [ "$mac_type" == "locally" ]; then type="";
+elif [ "$mac_type" == "specific" ]; then type=" -t$mac_type_specific";
+elif [ "$mac_type" == "vendor" ]; then type=" -t$mac_type_vendor";
+else type="";
+fi
+
+$PROG $merge $mode $type $network
+fi
+}
+
+
+
+boot() {
+	change_mac
+	uci commit network
+}
+
+start() {
+	change_mac
+	uci commit network
+	/etc/init.d/network restart
+}
+
+restart() {
+	return 0
+}
+
+stop() {
+	return 0
+}
+
+restore() {
+	for _net in $(uci get $PACKAGE_NAME${TYPED_SECTION}network); do uci delete network.$_net.macaddr 2>/dev/null; done
+	uci commit network
+	/etc/init.d/network restart
+}

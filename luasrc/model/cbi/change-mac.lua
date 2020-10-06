@@ -16,31 +16,6 @@ m.pageaction = false
 
 
 
-local _enable
-local _crontb
-local _ntlist
-local _mergep
-local _ramode
-local _matype
-local _matype_specific
-local _matype_vendor
-
-function getuci()
-	_enable = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "enabled")))
-	_crontb = tostring(util.trim(sys.exec("sed -n '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/p' /etc/crontabs/root")))
-	_ntlist = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "network")))
-	_mergep = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "merge_physical")))
-	if _mergep == "1" then _mergep = " -m"; else _mergep = ""; end
-	_ramode = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "random_mode")))
-	if _ramode == "disorderly" then _ramode = ""; elseif _ramode == "sequence" then _ramode = " -e"; else _ramode = ""; end
-	_matype = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "mac_type")))
-	_matype_specific = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "mac_type_specific")))
-	_matype_vendor = tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "mac_type_vendor")))
-	if _matype == "locally" then _matype = ""; elseif _matype == "specific" then _matype = " -t" .. _matype_specific; elseif _matype == "vendor" then _matype = " -t" .. _matype_vendor; else _matype = ""; end
-end
-
-getuci()
-
 s = m:section(TypedSection, "change-mac")
 s.anonymous = true
 
@@ -56,34 +31,6 @@ network.widget = "checkbox"
 merge_physical = s:option(Flag, "merge_physical", translate("Merge the same physical interface"))
 merge_physical.rmempty = false
 
-save_apply = s:option(Button, "_save_apply", translate("Save & Apply"))
-save_apply.inputtitle = translate("Save & Apply")
-save_apply.inputstyle = "apply"
-save_apply.write = function()
-	--m.uci:save(conf)
-	m.uci:commit(conf)
-	m.uci:apply()
-	getuci()
-
-	if _enable == "0" then sys.call ("sed -i '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/d' /etc/crontabs/root"); end
-	if _enable == "1" then
-		sys.call ("sed -i '/@reboot \\\/usr\\\/sbin\\\/change-mac.sh/d' /etc/crontabs/root")
-		sys.call ("sed -i '1i @reboot \\\/usr\\\/sbin\\\/change-mac.sh" .. _mergep .. _ramode .. _matype .. " " .. _ntlist .. "' /etc/crontabs/root")
-	end
-end
-
-change_now = s:option(Button, "_change_now", translate("Change MAC now"))
-change_now.inputtitle = translate("Change MAC now")
-change_now.inputstyle = "apply"
-change_now.write = function()
-	--m.uci:save(conf)
-	m.uci:commit(conf)
-	m.uci:apply()
-	getuci()
-
-	sys.call ("/usr/sbin/change-mac.sh" .. _mergep .. _ramode .. _matype .. " " .. _ntlist)
-end
-
 restore_sel = s:option(Button, "_restore_sel", translate("Restore select interfaces"))
 restore_sel.inputtitle = translate("Restore select interfaces")
 restore_sel.inputstyle = "apply"
@@ -91,11 +38,8 @@ restore_sel.write = function()
 	--m.uci:save(conf)
 	m.uci:commit(conf)
 	m.uci:apply()
-	getuci()
 
-	sys.call ("for _net in \$(uci get " .. conf .. typeds .. "network); do uci delete network.\$_net.macaddr; done")
-	sys.call ("uci commit network")
-	sys.call ("\/etc\/init.d\/network restart")
+	sys.call ("/etc/init.d/change-mac restore")
 end
 
 
@@ -123,6 +67,29 @@ mac_type_vendor = s:option(Value, "mac_type_vendor", translate("Vendor name"),
 mac_type_vendor.placeholder = "router:Asus"
 --mac_type_vendor:depends("mac_type", "vendor")
 mac_type_vendor.rmempty = false
+
+change_now = s:option(Button, "_change_now", translate("Change MAC now"))
+change_now.inputtitle = translate("Change MAC now")
+change_now.inputstyle = "apply"
+change_now.write = function()
+	--m.uci:save(conf)
+	m.uci:commit(conf)
+	m.uci:apply()
+
+	sys.call ("/etc/init.d/change-mac start")
+end
+
+save_apply = s:option(Button, "_save_apply", translate("Save & Apply"))
+save_apply.inputtitle = translate("Save & Apply")
+save_apply.inputstyle = "apply"
+save_apply.write = function()
+	--m.uci:save(conf)
+	m.uci:commit(conf)
+	m.uci:apply()
+
+	if tostring(util.trim(sys.exec("uci get " .. conf .. typeds .. "enabled"))) == "1" then sys.call ("/etc/init.d/change-mac enable");
+	else sys.call ("/etc/init.d/change-mac disable"); end
+end
 
 
 return m

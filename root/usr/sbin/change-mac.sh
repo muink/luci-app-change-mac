@@ -138,6 +138,4 @@ for _net in "$@"; do
   fi
 done
 
-uci commit network
-/etc/init.d/network restart
 echo All Done!
