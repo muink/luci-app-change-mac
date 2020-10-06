@@ -58,7 +58,7 @@ mac_type.default = "locally"
 mac_type.rmempty = false
 
 mac_type_specific = s:option(Value, "mac_type_specific", translate("Specify OUI"))
-mac_type_specific.placeholder = "20:CF:30"
+mac_type_specific.placeholder = "74:D0:2B"
 --mac_type_specific:depends("mac_type", "specific")
 mac_type_specific.rmempty = false
 
