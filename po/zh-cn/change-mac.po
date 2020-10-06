@@ -16,19 +16,19 @@ msgstr "每次引导时, 将随机 MAC 地址分配给指定的接口"
 msgid "Change MAC now"
 msgstr "立即更换 MAC"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:85
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:47
 msgid "Disorderly"
 msgstr "无序随机"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:44
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:22
 msgid "Enable MAC randomization"
 msgstr "启用 MAC 随机化"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:47
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:25
 msgid "Enabled interfaces"
 msgstr "已启用的接口"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:92
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:54
 msgid "Locally administered address"
 msgstr "本机管理地址"
 
@@ -37,37 +37,46 @@ msgstr "本机管理地址"
 msgid "MAC address randomizer"
 msgstr "MAC 地址随机化"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:90
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:52
 msgid "MAC address type"
 msgstr "MAC 地址类型"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:84
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:31
+msgid "Merge the same physical interface"
+msgstr "合并相同的物理接口"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:46
 msgid "Multi-interface MAC random mode"
 msgstr "多接口 MAC 随机模式"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:55
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:56
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:34
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:35
+msgid "Restore selected interfaces"
+msgstr "恢复选中的接口"
+
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:82
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:83
 msgid "Save & Apply"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:86
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:48
 msgid "Sequence"
 msgstr "顺序随机"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:93
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:98
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:55
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:60
 msgid "Specify OUI"
 msgstr "指定 OUI"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:91
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:53
 msgid "Use command 'rgmac --help' to get more information"
 msgstr "使用命令 'rgmac --help' 获取更多信息"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:104
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:66
 msgid "Use command 'rgmac -lrouter' to get valid vendor name"
 msgstr "使用命令 'rgmac -lrouter' 获取有效的厂商名称"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:94
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:103
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:56
+#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:65
 msgid "Vendor name"
 msgstr "厂商名称"

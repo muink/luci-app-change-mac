@@ -31,8 +31,8 @@ network.widget = "checkbox"
 merge_physical = s:option(Flag, "merge_physical", translate("Merge the same physical interface"))
 merge_physical.rmempty = false
 
-restore_sel = s:option(Button, "_restore_sel", translate("Restore select interfaces"))
-restore_sel.inputtitle = translate("Restore select interfaces")
+restore_sel = s:option(Button, "_restore_sel", translate("Restore selected interfaces"))
+restore_sel.inputtitle = translate("Restore selected interfaces")
 restore_sel.inputstyle = "apply"
 restore_sel.write = function()
 	--m.uci:save(conf)
