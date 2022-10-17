@@ -10,7 +10,7 @@
 MACPOOL=Mpool
 
 # Get options
-GETOPT=$(getopt -n $(basename $0) -o es:t: -l assign:,device:,help -- "$@")
+GETOPT=$(getopt -n $(basename $0) -o es:t:d -l assign:,device:,restore,help -- "$@")
 [ $? -ne 0 ] && >&2 echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
 ERROR=$(echo "$GETOPT" | sed "s| '[^']*'||g; s| -- .+$||; s| --$||")
@@ -20,7 +20,7 @@ for ru in --help\|--help -e\|-e -s\|--assign -t\|--device; do
   eval "echo \"\$ERROR\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
-for ru in --help\|--help; do
+for ru in --help\|--help -d\|--restore; do
   eval "echo \"\$ERROR\" | grep -E \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$(echo \"\$ERROR\" | sed -E \"s,^.*($ru).*\$,\\1,\")' cannot be used with other options\" && exit 1"
 done
 # Conflicting options
@@ -43,6 +43,7 @@ Options:\n\
   -e                                    -- Sequence randomization\n\
   -s, --assign <xx:xx:xx>               -- Specify OUI manually\n\
   -t, --device <VendorType:NameID>      -- Use IEEE public OUI\n\
+  -d, --restore                         -- Restore MAC address\n\
   --help                                -- Returns help info\n\
 \n\
 OptFormat:\n\
@@ -115,6 +116,9 @@ while [ -n "$1" ]; do
       [ -z "$TYPE" ] && >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help" && exit 1
       shift
     ;;
+    -d|--restore)
+      RESTORE=true
+    ;;
     --)
       shift
       break
@@ -135,15 +139,23 @@ for _nic in "$@"; do
   [ "$(ip link | grep " ${_nic}:")" == "" ] && >&2 echo -e "$(basename $0): Interface '$_nic' is unvalid" && ((_err++))
 done
 [ "$_err" -gt "0" ] && exit 1 || unset _err
-mac_pool $MACPOOL "$TYPE" $#
+
+# Filling pool
+if [ -z "$RESTORE" ]; then
+  mac_pool $MACPOOL "$TYPE" $#
+fi
 
 # Set
 _count=0
 for _nic in "$@"; do
   #single
   _section=$(uci show network | sed -En "/@device\[.*\]\.name='$_nic'/ {s|\.name=.*$|| p}")
-  [ "$_section" == "" ] && _section="network.$(uci add network device)" && uci set ${_section}.name="$_nic"
-  eval "uci set ${_section}.macaddr=$(echo \"\${$MACPOOL[$_count]}\")"
+  if [ -z "$RESTORE" ]; then
+    [ "$_section" == "" ] && _section="network.$(uci add network device)" && uci set ${_section}.name="$_nic"
+    eval "uci set ${_section}.macaddr=$(echo \"\${$MACPOOL[$_count]}\")"
+  else
+    [ "$_section" == "" ] || uci delete $_section
+  fi
   ((_count++))
 done
 uci commit network
