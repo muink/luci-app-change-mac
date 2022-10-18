@@ -1,6 +1,8 @@
 'use strict';
 'require view';
+'require fs';
 'require uci';
+'require ui';
 'require form';
 'require tools.widgets as widgets';
 
@@ -8,6 +10,31 @@ return view.extend({
 //	handleSaveApply: null,
 //	handleSave: null,
 //	handleReset: null,
+
+//	callInitAction: rpc.declare({
+//		object: 'luci',
+//		method: 'setInitAction',
+//		params: [ 'name', 'action' ],
+//		expect: { result: false }
+//	}),
+
+	load: function() {
+	return Promise.all([
+		uci.load('network'),
+		uci.load('change-mac'),
+	]);
+	},
+
+//	handleAction: function(name, action, ev) {
+//		return this.callInitAction(name, action).then(function(success) {
+//			if (success != true)
+//				throw _('Command failed');
+//
+//			return true;
+//		}).catch(function(e) {
+//			ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/%s %s" action: %s').format(name, action, e)));
+//		});
+//	},
 
 	render: function() {
 		var m, s, o;
@@ -55,36 +82,28 @@ return view.extend({
 		o = s.option(form.Button, '_change_now', _('Change MAC now'));
 		o.inputtitle = _('Change now');
 		o.inputstyle = 'apply';
-//	o.write = function()
-//		//m.uci:save(conf)
-//		m.uci:commit(conf)
-//		m.uci:apply()
-//
-//		sys.call ('/etc/init.d/change-mac start')
-//	end
+		o.onclick = function() {
+			m.save();
+			uci.save();
+			uci.apply();
+
+			return fs.exec('/etc/init.d/change-mac', ['start']);
+		};
+// o.onclick = this.handleChange.bind(this, m);
+// E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'start'), 'disabled': isReadonlyView }, _('Start')),
 
 		o = s.option(form.Button, '_restore_sel', _('Restore selected interfaces'));
 		o.inputtitle = _('Restore');
 		o.inputstyle = 'apply';
-//	o.write = function()
-//		//m.uci:save(conf)
-//		m.uci:commit(conf)
-//		m.uci:apply()
-//
-//		sys.call ('/etc/init.d/change-mac restore')
-//	end
+		o.onclick = function() {
+			m.save();
+			uci.save();
+			uci.apply();
 
-		o = s.option(form.Button, '_save_apply', _('Save & Apply'));
-		o.inputtitle = _('Save & Apply');
-		o.inputstyle = 'apply';
-//	o.write = function()
-//		//m.uci:save(conf)
-//		m.uci:commit(conf)
-//		m.uci:apply()
-//
-//		if tostring(util.trim(sys.exec('uci get ' .. conf .. typeds .. 'enabled'))) == '1' then sys.call ('/etc/init.d/change-mac enable');
-//		else sys.call ('/etc/init.d/change-mac disable'); end
-//	end
+			return fs.exec('/etc/init.d/change-mac', ['restore']);
+		};
+// o.onclick = L.bind(this.handleRestore, this, m);
+// E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'stop'), 'disabled': isReadonlyView }, _('Stop')),
 
 		return m.render();
 	}
