@@ -67,7 +67,8 @@ start_service() {
 }
 
 stop_service() {
-	uci set enabled '0'
+	uci set ${CONFIG_NAME}.@${TYPEDSECTION}[0].enabled='0'
+    uci commit ${CONFIG_NAME}
 }
 
 restore() {
