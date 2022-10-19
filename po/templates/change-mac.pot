@@ -1,77 +1,78 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:43
 msgid ""
 "Assign a random MAC address to the designated interface on every time boot"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:71
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:72
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:82
 msgid "Change MAC now"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:47
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:83
+msgid "Change now"
+msgstr ""
+
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:58
 msgid "Disorderly"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:22
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:48
 msgid "Enable MAC randomization"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:25
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:51
 msgid "Enabled interfaces"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:54
+#: applications/luci-app-change-mac/root/usr/share/rpcd/acl.d/applications/luci-app-change-mac.json:3
+msgid "Grant access to change-mac procedures"
+msgstr ""
+
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:65
 msgid "Locally administered address"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/controller/change-mac.lua:13
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:14
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:42
+#: applications/luci-app-change-mac/root/usr/share/luci/menu.d/applications/luci-app-change-mac.json:3
 msgid "MAC address randomizer"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:52
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:63
 msgid "MAC address type"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:31
-msgid "Merge the same physical interface"
-msgstr ""
-
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:46
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:57
 msgid "Multi-interface MAC random mode"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:34
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:35
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:96
+msgid "Restore"
+msgstr ""
+
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:95
 msgid "Restore selected interfaces"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:82
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:83
-msgid "Save & Apply"
-msgstr ""
-
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:48
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:59
 msgid "Sequence"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:55
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:60
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:66
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:71
 msgid "Specify OUI"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:53
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:64
 msgid "Use command 'rgmac --help' to get more information"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:66
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:77
 msgid "Use command 'rgmac -lrouter' to get valid vendor name"
 msgstr ""
 
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:56
-#: applications/luci-app-change-mac/luasrc/model/cbi/change-mac.lua:65
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:67
+#: applications/luci-app-change-mac/htdocs/luci-static/resources/view/change-mac.js:76
 msgid "Vendor name"
 msgstr ""

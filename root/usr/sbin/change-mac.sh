@@ -7,23 +7,24 @@
 #
 
 # Init
-WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" # <--
 MACPOOL=Mpool
 
 # Get options
-GETOPT=$(getopt -n $(basename $0) -o met: -l type:,help -- "$@")
-[ $? -ne 0 ] && echo -e "\tUse the --help option get help" && exit 1
+GETOPT=$(getopt -n $(basename $0) -o es:t:d -l assign:,device:,restore,help -- "$@")
+[ $? -ne 0 ] && >&2 echo -e "\tUse the --help option get help" && exit 1
 eval set -- "$GETOPT"
-ERROR=$(echo "$GETOPT" | sed "s|'[^']*'||g; s| -- .+$||; s| --$||")
+ERROR=$(echo "$GETOPT" | sed "s| '[^']*'||g; s| -- .+$||; s| --$||")
 
 # Duplicate options
-for ru in --help\|--help -m\|-m -e\|-e -t\|--type; do
+for ru in --help\|--help -e\|-e -s\|--assign -t\|--device; do
   eval "echo \"\$ERROR\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
-for ru in --help\|--help; do
+for ru in --help\|--help -d\|--restore; do
   eval "echo \"\$ERROR\" | grep -E \"^ ($ru) .+|.+ ($ru) .+|.+ ($ru) *\$\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$(echo \"\$ERROR\" | sed -E \"s,^.*($ru).*\$,\\1,\")' cannot be used with other options\" && exit 1"
 done
+# Conflicting options
+echo "$ERROR" | grep -E " (-s|--assign)\b" | grep -E " (-t|--device)\b" >/dev/null && >&2 echo "$(basename $0): Option '-s|--assign' cannot be used with option '-t|--device'" && exit 1
 
 
 
@@ -39,15 +40,31 @@ Interface MAC changer for Openwrt\n\
   change-mac.sh -t console:Sony eth0    -- Generate MAC address(Sony PS)\n\
 \n\
 Options:\n\
-  -m                                    -- Same physical ifname, Same MAC\n\
   -e                                    -- Sequence randomization\n\
-  -t, --type <mactype>                  -- MAC address type\n\
+  -s, --assign <xx:xx:xx>               -- Specify OUI manually\n\
+  -t, --device <VendorType:NameID>      -- Use IEEE public OUI\n\
+  -d, --restore                         -- Restore MAC address\n\
   --help                                -- Returns help info\n\
 \n\
-MACType:\n\
+OptFormat:\n\
   <xx:xx:xx>             Valid: 06fcee, 06-fc-ee, 06:fc:ee\n\
-  <VendorType:NameID>    Valid: Please use 'rgmac -l' to get the reference
+  <VendorType:NameID>    Valid: Please use 'rgmac -l[VendorType]' to get the reference
 \n"
+}
+
+# rev <string>
+rev() {
+local string
+local line
+local timeout=20
+if [ "$1" == "" ]; then
+  while read -r -t$timeout line; do
+    echo "$line" | sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//'
+  done
+else
+  string="$1"
+  echo "$string" | sed -e 'G;:1' -e 's/\(.\)\(.*\n\)/\2\1/;t1' -e 's/.//'
+fi
 }
 
 # mac_pool <Array> <Type> [Amount]
@@ -55,23 +72,23 @@ mac_pool() {
 local pool=$1; shift
 local type=$1; shift
 local amount=$[ $1 + 0 ]
-[ "$amount" -eq "0" ] && amount=1
+[ "$amount" -gt "0" ] && ((amount--))
 
 
 if [ "$MODE" == "sequence" ]; then
-  local base=`rgmac -u -ac $type 2>/dev/null`
-  [ "$base" == "" ] && >&2 echo -e "$(basename $0): Option '-t|--type' requires a valid argument\n\tUse the command 'rgmac -l' get valid argument" && exit 1
-  local count=$[ 0x${base: -2} -$amount -1 ]
-  base=${base:0:-2}
-  [ "$count" -lt "0" ] && count=0
+  local mac=`rgmac -uac $type`
+  [ "$?" == "1" ] && exit 1
+  local nic=$[ 0x${mac: -8:2}${mac: -5:2}${mac: -2} -$amount ]
+  [ "$nic" -lt "0" ] && nic=0
 
-  for i in $(seq 1 $amount); do
-    ((count+=1))
-    eval "${pool}[$i]=${base}$(printf %x $[ $count & 0xFF ] | sed -E 's|^([0-9a-fA-F])$|0\1|' | tr 'a-f' 'A-F')"
+  for i in $(seq 0 $amount); do
+    ((nic++))
+    eval "${pool}[$i]=${mac:0:9}$(rev "000000$( printf %x $[ $nic & 0xFFFFFF ] )" | cut -c1-6 | rev | tr 'a-f' 'A-F' | sed -E 's|^(..)(..)(..)$|\1:\2:\3|')"
   done
 else
-  for i in $(seq 1 $amount); do
-    eval "${pool}[$i]=$(rgmac -u -ac $type)"
+  for i in $(seq 0 $amount); do
+    eval "${pool}[$i]=$(rgmac -uac $type)"
+    [ "$?" == "1" ] && exit 1
   done
 fi
 }
@@ -86,16 +103,21 @@ while [ -n "$1" ]; do
       _help
       exit
     ;;
-    -m)
-      SMIFMAC=true
-    ;;
     -e)
       MODE=sequence
     ;;
-    -t|--type)
-      TYPE="$(echo "$2" | sed -En "/^[0-f]{2}(:[0-f]{2}){2}$|^[^:]+:[^:]+$/ {s|^([0-f]{2}(:[0-f]{2}){2})$|-s\1|; s|^([^:]+:[^:]+)$|-t\1|; p}")"
+    -s|--assign)
+      TYPE="$(echo "$2" | sed -En "/^[0-f]{2}(:[0-f]{2}){2}$/ {s|^([0-f]{2}(:[0-f]{2}){2})$|-s\1|; p}")"
       [ -z "$TYPE" ] && >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help" && exit 1
       shift
+    ;;
+    -t|--type)
+      TYPE="$(echo "$2" | sed -En "/^[^:]+:[^:]+$/ {s|^([^:]+:[^:]+)$|-t\1|; p}")"
+      [ -z "$TYPE" ] && >&2 echo -e "$(basename $0): Option '$1' requires a valid argument\n\tUse the --help option get help" && exit 1
+      shift
+    ;;
+    -d|--restore)
+      RESTORE=true
     ;;
     --)
       shift
@@ -111,31 +133,32 @@ done
 
 # Get parameters
 [ "$#" -eq "0" ] && >&2 echo -e "$(basename $0): No valid interfaces\n\tUse the --help option get help" && exit 1
-mac_pool $MACPOOL "$TYPE" $#
+_err=0
+for _nic in "$@"; do
+  [ "$_nic" == "lo" ] && >&2 echo -e "$(basename $0): Interface 'lo' is unvalid" && ((_err++))
+  [ "$(ip link | grep " ${_nic}:")" == "" ] && >&2 echo -e "$(basename $0): Interface '$_nic' is unvalid" && ((_err++))
+done
+[ "$_err" -gt "0" ] && exit 1 || unset _err
+
+# Filling pool
+if [ -z "$RESTORE" ]; then
+  mac_pool $MACPOOL "$TYPE" $#
+fi
 
 # Set
-_count=1
-for _net in "$@"; do
-  #bridge
-  if [ "$(uci get network.${_net}.type 2>/dev/null)" == "bridge" ]; then
-    uci set network.${_net}.macaddr="$(eval "echo \"\${$MACPOOL[$_count]}\"")"
-    ((_count++))
-    continue
-  fi
+_count=0
+for _nic in "$@"; do
   #single
-  _ifname=$(uci get network.${_net}.ifname)
-  if [ "${!_ifname}" == "" ]; then
-    eval "$_ifname=\${$MACPOOL[$_count]}"
-    uci set network.${_net}.macaddr="${!_ifname}"
-    ((_count++))
+  _section=$(uci show network | sed -En "/@device\[.*\]\.name='$_nic'/ {s|\.name=.*$|| p}")
+  if [ -z "$RESTORE" ]; then
+    [ "$_section" == "" ] && _section="network.$(uci add network device)" && uci set ${_section}.name="$_nic"
+    eval "uci set ${_section}.macaddr=$(echo \"\${$MACPOOL[$_count]}\")"
   else
-    if [ "$SMIFMAC" == "true" ]; then
-      uci set network.${_net}.macaddr="${!_ifname}"
-    else
-      uci set network.${_net}.macaddr="$(eval "echo \"\${$MACPOOL[$_count]}\"")"
-      ((_count++))
-    fi
+    [ "$_section" == "" ] || uci delete $_section
   fi
+  ((_count++))
 done
+uci commit network
+/etc/init.d/network reload
 
 echo All Done!
