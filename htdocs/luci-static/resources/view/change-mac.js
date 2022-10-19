@@ -104,6 +104,12 @@ return view.extend({
 		o.onclick = this.handleAction.bind(this, m, 'restore');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'stop'), 'disabled': isReadonlyView }, _('Stop')),
 
+		o = s.option(form.Button, '_query_oui', _('Query OUI vendor'));
+		o.inputtitle = _('Query');
+		o.inputstyle = 'apply';
+		o.onclick = function() {
+		}
+
 		return m.render();
 	}
 });
