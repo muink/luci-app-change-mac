@@ -36,6 +36,19 @@ return view.extend({
 //		});
 //	},
 
+	handleAction: function(m, action, ev) {
+		m.save();
+		uci.save();
+		uci.apply();
+		uci.unload('change-mac');
+		uci.load('change-mac');
+
+		return fs.exec('/etc/init.d/change-mac', [action])
+			.then(L.bind(uci.unload, uci, 'change-mac'))
+			.then(L.bind(m.render, m))
+			.catch(function(e) { ui.addNotification(null, E('p', e.message)) });
+	},
+
 	render: function() {
 		var m, s, o;
 
@@ -82,27 +95,13 @@ return view.extend({
 		o = s.option(form.Button, '_change_now', _('Change MAC now'));
 		o.inputtitle = _('Change now');
 		o.inputstyle = 'apply';
-		o.onclick = function() {
-			m.save();
-			uci.save();
-			uci.apply();
-
-			return fs.exec('/etc/init.d/change-mac', ['start']);
-		};
-// o.onclick = this.handleChange.bind(this, m);
+		o.onclick = this.handleAction.bind(this, m, 'start');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'start'), 'disabled': isReadonlyView }, _('Start')),
 
 		o = s.option(form.Button, '_restore_sel', _('Restore selected interfaces'));
 		o.inputtitle = _('Restore');
 		o.inputstyle = 'apply';
-		o.onclick = function() {
-			m.save();
-			uci.save();
-			uci.apply();
-
-			return fs.exec('/etc/init.d/change-mac', ['restore']);
-		};
-// o.onclick = L.bind(this.handleRestore, this, m);
+		o.onclick = this.handleAction.bind(this, m, 'restore');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'stop'), 'disabled': isReadonlyView }, _('Stop')),
 
 		return m.render();
