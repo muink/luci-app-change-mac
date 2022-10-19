@@ -16,7 +16,7 @@ eval set -- "$GETOPT"
 ERROR=$(echo "$GETOPT" | sed "s| '[^']*'||g; s| -- .+$||; s| --$||")
 
 # Duplicate options
-for ru in --help\|--help -e\|-e -s\|--assign -t\|--device; do
+for ru in --help\|--help -d\|--restore -e\|-e -s\|--assign -t\|--device; do
   eval "echo \"\$ERROR\" | grep -E \" ${ru%|*}[ .+]* ($ru)| ${ru#*|}[ .+]* ($ru)\" >/dev/null && >&2 echo \"\$(basename \$0): Option '\$ru' option is repeated\" && exit 1"
 done
 # Independent options
