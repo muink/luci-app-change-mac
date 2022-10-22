@@ -52,6 +52,11 @@ return view.extend({
 		return this.handleCommand('rgmac', [ '-e', addr ]);
 	},
 
+	handleQueryVendor: function(ev, cmd) {
+
+		return this.handleCommand('rgmac', [ '-lrouter' ]);
+	},
+
 //	handleAction: function(name, action, ev) {
 //		return this.callInitAction(name, action).then(function(success) {
 //			if (success != true)
@@ -112,13 +117,13 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'mac_type_specific', _('Specify OUI'));
-		o.placeholder = '74:D0:2B';
+		o.placeholder = 'OUI    e.g. 74:D0:2B';
 		//o.depends('mac_type', 'specific');
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'mac_type_vendor', _('Vendor name'),
 			_("Use command 'rgmac -lrouter' to get valid vendor name"));
-		o.placeholder = 'router:Asus';
+		o.placeholder = 'VendorType:NameID    e.g. router:Asus';
 		//o.depends('mac_type', 'vendor');
 		o.rmempty = false;
 
@@ -134,20 +139,31 @@ return view.extend({
 		o.onclick = this.handleAction.bind(this, m, 'restore');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'stop'), 'disabled': isReadonlyView }, _('Stop')),
 
-		s = m.section(form.TypedSection, '_query_oui');
+		s = m.section(form.TypedSection, '_utilities');
 		s.render = L.bind(function(view, section_id) {
 			return  E('div',{ 'class': 'cbi-section' }, [
-				E('h3', {}, [ _('Query OUI vendor') ]),
-				E('input', {
-					'style': 'margin:5px 0',
-					'type': 'text',
-					'value': oui_be_queried
-				}),
-				E('span', { 'class': 'diag-action' }, [
-					E('button', {
-						'class': 'cbi-button cbi-button-action',
-						'click': ui.createHandlerFn(view, 'handleQueryOUI')
-					}, [ _('Query') ])
+				E('h3', {}, [ _('Utilities') ]),
+				E('table', { 'class': 'table' }, [
+					 E('td', { 'class': 'td left' }, [
+						E('input', {
+							'style': 'margin:5px 0',
+							'type': 'text',
+							'value': oui_be_queried
+						}),
+						E('span', { 'class': 'diag-action' }, [
+							E('button', {
+								'class': 'cbi-button cbi-button-action',
+								'click': ui.createHandlerFn(view, 'handleQueryOUI')
+							}, [ _('Query OUI vendor') ])
+						])
+					]),
+
+					E('td', { 'class': 'td right' }, [
+						E('button', {
+							'class': 'cbi-button cbi-button-action',
+							'click': ui.createHandlerFn(view, 'handleQueryVendor')
+						}, [ _('List available ') + _('Vendor name') ])
+					])
 				]),
 				E('pre', { 'class': 'command-output', 'style': 'display:none' })
 			]);
