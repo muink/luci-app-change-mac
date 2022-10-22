@@ -1,5 +1,6 @@
 'use strict';
 'require view';
+'require dom';
 'require fs';
 'require uci';
 'require ui';
@@ -20,9 +21,35 @@ return view.extend({
 
 	load: function() {
 	return Promise.all([
+		L.resolveDefault(fs.stat('/usr/bin/rgmac'), {}),
 		uci.load('network'),
 		uci.load('change-mac'),
 	]);
+	},
+
+	handleCommand: function(exec, args) {
+		var buttons = document.querySelectorAll('.diag-action > .cbi-button');
+
+		for (var i = 0; i < buttons.length; i++)
+			buttons[i].setAttribute('disabled', 'true');
+
+		return fs.exec(exec, args).then(function(res) {
+			var out = document.querySelector('.command-output');
+				out.style.display = '';
+
+			dom.content(out, [ res.stdout || '', res.stderr || '' ]);
+		}).catch(function(err) {
+			ui.addNotification(null, E('p', [ err ]))
+		}).finally(function() {
+			for (var i = 0; i < buttons.length; i++)
+				buttons[i].removeAttribute('disabled');
+		});
+	},
+
+	handleQueryOUI: function(ev, cmd) {
+		var addr = ev.currentTarget.parentNode.previousSibling.value;
+
+		return this.handleCommand('rgmac', [ '-e', addr ]);
 	},
 
 //	handleAction: function(name, action, ev) {
@@ -49,7 +76,10 @@ return view.extend({
 			.catch(function(e) { ui.addNotification(null, E('p', e.message)) });
 	},
 
-	render: function() {
+	render: function(res) {
+		var has_rgmac = res[0].path,
+			oui_be_queried = uci.get('change-mac', '@change-mac[0]', 'mac_type_specific') || '74:D0:2B';
+
 		var m, s, o;
 
 		m = new form.Map('change-mac', _('MAC address randomizer'),
@@ -104,11 +134,24 @@ return view.extend({
 		o.onclick = this.handleAction.bind(this, m, 'restore');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'stop'), 'disabled': isReadonlyView }, _('Stop')),
 
-		o = s.option(form.Button, '_query_oui', _('Query OUI vendor'));
-		o.inputtitle = _('Query');
-		o.inputstyle = 'apply';
-		o.onclick = function() {
-		}
+		s = m.section(form.TypedSection, '_query_oui');
+		s.render = L.bind(function(view, section_id) {
+			return  E('div',{ 'class': 'cbi-section' }, [
+				E('h3', {}, [ _('Query OUI vendor') ]),
+				E('input', {
+					'style': 'margin:5px 0',
+					'type': 'text',
+					'value': oui_be_queried
+				}),
+				E('span', { 'class': 'diag-action' }, [
+					E('button', {
+						'class': 'cbi-button cbi-button-action',
+						'click': ui.createHandlerFn(view, 'handleQueryOUI')
+					}, [ _('Query') ])
+				]),
+				E('pre', { 'class': 'command-output', 'style': 'display:none' })
+			]);
+		}, o, this);
 
 		return m.render();
 	}
