@@ -23,7 +23,6 @@ endef
 define Package/$(LUCI_NAME)/prerm
 #!/bin/sh
 /etc/init.d/change-mac stop
-/etc/init.d/change-mac disable
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
