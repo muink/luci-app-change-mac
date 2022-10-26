@@ -130,7 +130,7 @@ return view.extend({
 		o = s.option(form.Button, '_change_now', _('Change MAC now'));
 		o.inputtitle = _('Change now');
 		o.inputstyle = 'apply';
-		o.onclick = this.handleAction.bind(this, m, 'start');
+		o.onclick = this.handleAction.bind(this, m, 'change');
 // E('button', { 'class': 'btn cbi-button-action', 'click': ui.createHandlerFn(this, 'handleAction', list[i].name, 'start'), 'disabled': isReadonlyView }, _('Start')),
 
 		o = s.option(form.Button, '_restore_sel', _('Restore selected interfaces'));
