@@ -5,7 +5,7 @@ LuCI for MAC address randomizer
 This is a project for changing the interface MAC on Openwrt
 
 ## Dependencies
-`bash`, `[rgmac][]`, `getopt`
+`bash`, **[rgmac][]**, `getopt`
 
 ## Build
 
@@ -33,5 +33,5 @@ MIT License
 
 ----------
 
-  [rgmac]: https://github.com/muink/rgmac
+  [rgmac]: https://github.com/muink/openwrt-rgmac
   [SDK]: http://wiki.openwrt.org/doc/howto/obtain.firmware.sdk
