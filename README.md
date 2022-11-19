@@ -24,7 +24,11 @@ This is a project for changing the interface MAC on Openwrt
    ./scripts/feeds update -a
    ./scripts/feeds install -a
    # Get Makefile
-   git clone --depth 1 --branch master --single-branch https://github.com/muink/luci-app-change-mac.git package/luci-app-change-mac
+   git clone --depth 1 --branch master --single-branch --no-checkout https://github.com/muink/luci-app-change-mac.git package/luci-app-change-mac
+   pushd package/luci-app-change-mac
+   umask 022
+   git checkout
+   popd
    # Select the package LuCI -> Applications -> luci-app-change-mac
    make menuconfig
    # Start compiling
