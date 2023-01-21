@@ -85,18 +85,6 @@ restore() {
 	start 'restore_mac'
 }
 
-service_triggers() {
-	return 0
-}
-
-boot() {
-	start
-}
-
 restart() {
 	start
-}
-
-reload() {
-	restart
 }
