@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_NAME:=luci-app-change-mac
-PKG_VERSION:=0.3.6
+PKG_VERSION:=0.3.7
 #PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI for MAC address randomizer
