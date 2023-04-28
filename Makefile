@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_NAME:=luci-app-change-mac
-PKG_VERSION:=0.3.8
+PKG_VERSION:=0.3.9
 #PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI for MAC address randomizer
@@ -21,8 +21,6 @@ define Package/$(LUCI_NAME)/conffiles
 endef
 
 define Package/$(LUCI_NAME)/prerm
-#!/bin/sh
-/etc/init.d/change-mac stop
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
